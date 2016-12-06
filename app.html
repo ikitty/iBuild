@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<script type="text/javascript">
+    window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;
+
+    // Pretend that cookies work
+    (function (document) {
+        var cookies = {};
+        document.__defineGetter__('cookie', function () {
+            var output = [];
+            for (var cookieName in cookies) {
+                output.push(cookieName + "=" + cookies[cookieName]);
+            }
+            return output.join(";");
+        });
+        document.__defineSetter__('cookie', function (s) {
+            var indexOfSeparator = s.indexOf("=");
+            var key = s.substr(0, indexOfSeparator);
+            var value = s.substring(indexOfSeparator + 1);
+            cookies[key] = value;
+            return key + "=" + value;
+        });
+        document.clearCookies = function () {
+            cookies = {};
+        };
+
+        originalLocation = document.location;
+        // Pretend that we're hosted on an Internet Website
+        document.__defineGetter__('location', function () {
+            return {
+                href: 'http://ibuild.app/',
+                protocol: 'http:',
+                host: 'ibuild.app',
+                port: '',
+                pathname: '/',
+                search: '',
+                hash: '',
+                username: '',
+                password: '',
+                origin: 'http://ibuild.app',
+                reload: function () {
+                    return originalLocation.reload.apply(originalLocation, arguments);
+                }
+            };
+        });
+
+        // Nobody sets location
+        document.__defineSetter__('location', function () {
+        })
+    })(document);
+</script>
+</head>
+<body>
+
+<div class="top_bar">
+    <div class="logo_area">
+        <div class="logo"></div>
+    </div>
+
+    <span class="op_item" id="js-setting-button">全局设置</span>
+    <span class="op_item" >
+        <input class="op_item_apply" id="btnApplyProject" type="file" webkitdirectory multiple> 关联项目
+    </span>
+
+
+
+    <span class="op_item hide" id="js-new-project">新建项目</span>
+    <span class="icon icon-log hide" id="js-log-button" title="查看日志"></span>
+    <span class="top_bar__status" id="js-logs-status"></span>
+</div>
+
+<div class="tasks" id="js-tasks">
+    <span data-task="dev" id="js-build-dev" class="tasks__button">开发</span>
+    <span data-task="dist" class="tasks__button">编译</span>
+    <span class="jsRemoveProject">删除</span>
+    <span class="jsSetCurrent">设置</span>
+</div>
+
+<div class="wraper">
+    <div class="projects">
+        <ul class="projects__list" id="js-project-list"> </ul>
+
+        <div class="welcome hide" id="welcomePart"> <div class="btn_try" id="btnTry">快速体验</div> </div>
+    </div>
+
+    <div class="bottom-fixed hide">
+        <div class="logs" id="js-log">
+            <span class="icon icon-clean" id="js-clean-log" title="清除日志"></span>
+            <div class="logs__inner">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--setting-->
+<div class="setting hide" id="js-setting">
+    <a href="javascript:;" id="js-setting-close" class="icon icon-close"></a>
+
+    <div class="setting__section" id="js-workspace">
+        <div class="setting__hd">工作区路径</div>
+        <div class="setting__bd">
+            <div class="ui-text">
+                <input type="text" data-workspace="true" id="js-form-workspace" value="/Users/Apple/Workspace/Projects/">
+            </div>
+        </div>
+    </div>
+
+    <div class="setting__section">
+        <div class="setting__hd">功能</div>
+        <div class="setting__bd">
+            <div class="ui-checkbox">
+                <input type="checkbox" name="livereload" checked id="livereload">
+                <label for="livereload">开启 LiveReload 浏览器自动刷新</label>
+            </div>
+            <div class="ui-checkbox">
+                <input type="checkbox" name="supportREM" id="supportREM">
+                <label for="supportREM">开启 REM 适配解决方案</label>
+            </div>
+            <div class="ui-checkbox">
+                <input type="checkbox" name="supportWebp" id="supportWebp">
+                <label for="supportWebp">开启 智能 WebP 解决方案</label>
+            </div>
+            <div class="ui-checkbox">
+                <input type="checkbox" name="reversion" id="reversion">
+                <label for="reversion">开启 文件版本 (MD5) 去缓存解决方案</label>
+            </div>
+            <div class="ui-checkbox">
+                <input type="checkbox" name="supportChanged" id="supportChanged">
+                <label for="supportChanged">开启 文件变动增量编译支持</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--about-->
+<div class="about hide" id="js-about">
+    <div class="logo"></div>
+    <div class="title jsProjectName"></div>
+    <a href="javascript:;" class="icon icon-close"></a>
+</div>
+
+
+<script src="./assets/js/jquery.min.js"></script>
+<script src="./src/app.js"></script>
+<script src="./src/menu.js"></script>
+</body>
+</html>

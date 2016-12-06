@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<script type="text/javascript">
+    window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;
+</script>
+</head>
+<body>
+
+<div class="about" id="js-about">
+    <div class="logo"></div>
+    <div class="title" id="pName"></div>
+    <h2 class="desc">偏展示类的前端项目构建工具</h2>
+</div>
+<script>
+    var pName = nodeRequire('./package.json').name ;
+    document.getElementById('pName').innerHTML = pName ;
+</script>
+</body>
+</html>
