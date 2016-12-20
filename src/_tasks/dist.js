@@ -132,11 +132,9 @@ function dist(projectPath, log, callback) {
                 console.log(error.message);
                 log(error.message);
             })
-            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            //.pipe(lazyImageCSS({imagePath: lazyDir}))
             // .pipe(tmtsprite({margin: 4}))
-            .pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
-            .on('data', function () {
-            })
+            //.pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
             .on('end', function () {
                 console.log('compileSass success.');
                 log('compileSass success.');
