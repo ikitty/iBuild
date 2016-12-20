@@ -274,6 +274,7 @@ function dist(projectPath, log, callback) {
     //webp 编译
     function supportWebp(cb) {
         if (config['supportWebp']) {
+            console.log('ready to webp');
             webp(projectPath, cb);
         } else {
             cb();
@@ -353,9 +354,9 @@ function dist(projectPath, log, callback) {
         function (next) {
             compileLess(next);
         },
-        function (next) {
-            compileSass(next);
-        },
+        //function (next) {
+            //compileSass(next);
+        //},
         function (next) {
             compileAutoprefixer(next);
         },
@@ -378,9 +379,9 @@ function dist(projectPath, log, callback) {
         function (next) {
             compileHtml(next);
         },
-        function (next) {
-            reversion(next);
-        },
+        //function (next) {
+            //reversion(next);
+        //},
         function (next) {
             supportWebp(next);
         },

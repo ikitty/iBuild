@@ -1,6 +1,6 @@
 {
     "livereload": true,
     "supportREM": false,
-    "supportWebp": false,
+    "supportWebp": true,
     "supportChanged": false
 }
