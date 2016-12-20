@@ -56,7 +56,7 @@ let newProjectSucess = false;
 let getListTmp = (name,path ) => (
         `<li class="list_item" data-project="${name}" title="${path}">
             <span class="icon icon-finder" data-finder="true" ></span>
-            <div class="projects__list-content">
+            <div class="list_content">
                 <span class="projects__name">${name}</span>
                 <div class="projects__path">${path}</div>
             </div>
@@ -348,7 +348,7 @@ function newProjectFn() {
 
     let $projectHtml = $(`<li class="list_item" data-project="" title="">
                               <span class="icon icon-finder" data-finder="true"></span>
-                              <div class="projects__list-content">
+                              <div class="list_content">
                                   <span class="projects__name" contenteditable></span>
                                   <div class="projects__path"></div>
                               </div>
@@ -521,7 +521,7 @@ function newProjectReply(projectPath) {
 let taskTimer = null;
 
 //绑定任务按钮事件
-$('#js-tasks').find('.tasks__button').on('click', function () {
+$('#js-tasks').find('.jsTaskBtn').on('click', function () {
     let $this = $(this);
     clearTimeout(taskTimer);
 
@@ -793,8 +793,7 @@ $projectList.on('click, mouseover', '.list_item', function () {
 });
 
 function setNormal() {
-    $buildDevButton.removeClass('tasks__button_watching');
-    $buildDevButton.text('开发');
+    $buildDevButton.removeClass('tasks_btn_watching').text('开发');
     $buildDevButton.data('devwatch', false);
 
     $curProject.removeClass('list_item_watching');
@@ -802,8 +801,7 @@ function setNormal() {
 }
 
 function setWatching() {
-    $buildDevButton.addClass('tasks__button_watching');
-    $buildDevButton.text('监听中');
+    $buildDevButton.addClass('tasks_btn_watching').text('正在监听');
     $buildDevButton.data('devwatch', true);
 
     $curProject.addClass('list_item_watching');
@@ -812,13 +810,13 @@ function setWatching() {
 
 $buildDevButton.hover(function () {
     let $this = $(this);
-    if ($this.hasClass('tasks__button_watching')) {
-        $this.text('停止');
+    if ($this.hasClass('tasks_btn_watching')) {
+        $this.text('停止监听');
     }
 }, function () {
     let $this = $(this);
-    if ($this.hasClass('tasks__button_watching')) {
-        $this.text('监听中');
+    if ($this.hasClass('tasks_btn_watching')) {
+        $this.text('正在监听');
     }
 });
 

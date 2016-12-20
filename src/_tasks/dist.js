@@ -6,7 +6,6 @@ const gulp = require('gulp');
 const fs = require('fs');
 const del = require('del');
 const path = require('path');
-const ejs = require('gulp-ejs');
 const gulpif = require('gulp-if');
 const less = require('gulp-less');
 const util = require(path.join(__dirname, './lib/util'));
@@ -17,12 +16,13 @@ const minifyCSS = require('gulp-cssnano');
 const imagemin = require('weflow-imagemin');
 // const tmtsprite = require('gulp-tmtsprite');   // 雪碧图合并
 const pngquant = require('imagemin-pngquant');
-const ejshelper = require('tmt-ejs-helper');
+
 const postcss = require('gulp-postcss');  // CSS 预处理
 const postcssPxtorem = require('postcss-pxtorem'); // 转换 px 为 rem
 const postcssAutoprefixer = require('autoprefixer');
 const posthtml = require('gulp-posthtml');
 const posthtmlPx2rem = require('posthtml-px2rem');
+
 const RevAll = require('weflow-rev-all');   // reversion
 const revDel = require('gulp-rev-delete-original');
 // const sass = require('gulp-sass');

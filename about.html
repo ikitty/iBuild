@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<link rel="stylesheet" href="assets/css/reset.css">
-<link rel="stylesheet" href="assets/css/app.css">
 <script type="text/javascript">
     window.nodeRequire = require;
     delete window.require;
     delete window.exports;
     delete window.module;
 </script>
+<style type="text/css" media="screen">
+    * {margin:0;padding:0;list-style:none;}
+    .about {padding-top:15px;padding-left:20px;}
+    .title {font:400 18px/35px "Microsoft YaHei", Arial;color:#333;}
+    .desc {font:400 14px/22px "Microsoft YaHei", Arial;color:#888;}
+</style>
 </head>
 <body>
 
-<div class="about" id="js-about">
-    <div class="logo"></div>
-    <div class="title" id="pName"></div>
+<div class="about" >
+    <h1 class="title" id="pName">iBuild</h1>
     <h2 class="desc">偏展示类的前端项目构建工具</h2>
 </div>
 <script>

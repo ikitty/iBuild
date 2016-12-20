@@ -1,19 +1,6 @@
 {
-    "ftp": {
-        "host": "",
-        "port": "",
-        "user": "",
-        "pass": "",
-        "remotePath": "",
-        "includeHtml": false,
-        "ssh": false
-    },
     "livereload": true,
-    "lazyDir": [
-        "../slice"
-    ],
     "supportREM": false,
     "supportWebp": false,
-    "supportChanged": false,
-    "reversion": false
+    "supportChanged": false
 }

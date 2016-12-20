@@ -10,17 +10,26 @@ const path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-let logo = path.join(__dirname, 'assets/img/logo.png');
 
 let willClose = false;
-
 const packageJson = require('./package.json')
+let logo = path.join(__dirname, 'assets/img/logo.png');
+
+let debug = 1
+
+let winWidth = 800 
+let winHeight = 500
+
+if (debug) {
+    winWidth = 1500
+    winHeight = 1000 
+}
 
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1500,
-        height: 800,
+        width: winWidth,
+        height: winHeight,
         resizable: false,
         title: packageJson.name,
         icon: logo
@@ -29,7 +38,7 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/app.html');
 
-    mainWindow.webContents.openDevTools();
+    debug && mainWindow.webContents.openDevTools();
 
     mainWindow.on('close', function (event) {
         if (process.platform !== 'win32' && !willClose) {

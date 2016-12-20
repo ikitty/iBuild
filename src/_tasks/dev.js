@@ -1,18 +1,14 @@
 "use strict";
 const path = require('path');
 const del = require('del');
-const ejs = require('gulp-ejs');
-const ejshelper = require('tmt-ejs-helper');
 const async = require('async');
 const gulp = require('gulp');
 const less = require('gulp-less');
-const postcss = require('gulp-postcss');   // CSS 预处理
-const posthtml = require('gulp-posthtml');  // HTML 预处理
-// const sass = require('gulp-sass');
+//const sass = require('gulp-sass');
+
 const Common = require(path.join(__dirname, '../common.js'));
 
 function dev(projectPath, log, callback) {
-
     const bs = require('browser-sync').create();  // 自动刷新浏览器
 
     let projectConfigPath = path.join(projectPath, Common.CONFIGNAME);
@@ -24,8 +20,6 @@ function dev(projectPath, log, callback) {
         config = Common.requireUncached(path.join(__dirname, '../../' + Common.CONFIGNAME));
     }
 
-    let lazyDir = config.lazyDir || ['../slice'];
-
     let paths = {
         src: {
             dir: path.join(projectPath, './src'),
@@ -34,11 +28,9 @@ function dev(projectPath, log, callback) {
             js: path.join(projectPath, './src/js/**/*.js'),
             media: path.join(projectPath, './src/media/**/*'),
             less: [path.join(projectPath, './src/css/style-*.less'), path.join(projectPath, './src/css/**/*.css')],
-            lessAll: path.join(projectPath, './src/css/**/*.less'),
+            lessWatcher: [path.join(projectPath, './src/css/*.less'), path.join(projectPath, './src/css/**/*.css')],
             sass: path.join(projectPath, './src/css/style-*.scss'),
-            sassAll: path.join(projectPath, './src/css/**/*.scss'),
-            html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**/**.html')],
-            htmlAll: path.join(projectPath, './src/html/**/*.html')
+            html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**/**.html')]
         },
         dev: {
             dir: path.join(projectPath, './dev'),
@@ -48,7 +40,7 @@ function dev(projectPath, log, callback) {
         }
     };
 
-    // 复制操作
+    // just copy
     function copyHandler(type, file, cb) {
         if (typeof file === 'function') {
             cb = file;
@@ -64,7 +56,6 @@ function dev(projectPath, log, callback) {
             });
     }
 
-    // 自动刷新
     function reloadHandler() {
         config.livereload && bs.reload();
     }
@@ -90,14 +81,12 @@ function dev(projectPath, log, callback) {
     //编译 sass
     function compileSass(cb) {
         gulp.src(paths.src.sass)
-            // .pipe(sass())
+            //.pipe(sass())
             .on('error', function (error) {
                 console.log(error.message);
                 log(error.message);
             })
             .pipe(gulp.dest(paths.dev.css))
-            .on('data', function () {
-            })
             .on('end', function () {
                 if (cb) {
                     console.log('compile Sass success.');
@@ -109,20 +98,15 @@ function dev(projectPath, log, callback) {
             })
     }
 
-    //编译 html
     function compileHtml(cb) {
         //option base is required on LocalDev
         gulp.src(paths.src.html, {base: paths.src.dir})
-            .pipe(ejs(ejshelper()).on('error', function (error) {
-                console.log(error.message);
-                log(error.message);
-            }))
             .pipe(gulp.dest(paths.dev.dir))
             .on('end', function () {
                 if (cb) {
                     console.log('compile Html success.');
                     log('compile Html success.');
-                    cb();
+                    cb && cb();
                 } else {
                     reloadHandler();
                 }
@@ -132,13 +116,12 @@ function dev(projectPath, log, callback) {
     //监听文件
     function watch(cb) {
         var watcher = gulp.watch([
+                paths.src.html,
+                paths.src.js,
+                paths.src.lessWatcher,
                 paths.src.img,
                 paths.src.slice,
-                paths.src.js,
-                paths.src.media,
-                paths.src.lessAll,
-                paths.src.sassAll,
-                paths.src.htmlAll
+                paths.src.media
             ],
             {ignored: /[\/\\]\./}
         );
@@ -213,8 +196,8 @@ function dev(projectPath, log, callback) {
                 }
                 break;
 
+                //todo less?
             case 'css':
-
                 var ext = path.extname(file);
 
                 if (type === 'removed') {
@@ -224,7 +207,7 @@ function dev(projectPath, log, callback) {
                     if (ext === '.less') {
                         compileLess();
                     } else {
-                        compileSass();
+                        // compileSass();
                     }
                 }
 
@@ -233,8 +216,7 @@ function dev(projectPath, log, callback) {
             case 'html':
                 if (type === 'removed') {
                     let tmp = file.replace(/src/, 'dev');
-                    del([tmp], {force: true}).then(function () {
-                    });
+                    del([tmp], {force: true}).then(function () { });
                 } else {
                     compileHtml();
                 }
@@ -252,21 +234,20 @@ function dev(projectPath, log, callback) {
                 directory: true
             },
             startPath: "/html",
-            port: 8080,
+            port: 8088,
             reloadDelay: 0,
             timestamps: true,
-            notify: {      //自定制livereload 提醒条
+            notify: {      
                 styles: [
                     "margin: 0",
                     "padding: 5px",
                     "position: fixed",
-                    "font-size: 10px",
+                    "font-size: 12px",
                     "z-index: 9999",
                     "bottom: 0px",
                     "right: 0px",
                     "border-radius: 0",
-                    "border-top-left-radius: 5px",
-                    "background-color: rgba(60,197,31,0.5)",
+                    "background-color: rgba(255,100,33,0.8)",
                     "color: white",
                     "text-align: center"
                 ]
@@ -277,22 +258,9 @@ function dev(projectPath, log, callback) {
     }
 
     async.series([
-        /**
-         * 先删除目标目录,保证最新
-         * @param next
-         */
         function (next) {
-            del(paths.dev.dir, {force: true}).then(function () {
-                next();
-            })
+            del(paths.dev.dir, {force: true}).then(function () { next(); })
         },
-        /**
-         * 一些可以同步的操作
-         * 复制 img, slice, js, media
-         * 编译LESS
-         * 编译HTML
-         * @param next
-         */
         function (next) {
             async.parallel([
                 function (cb) {
@@ -309,9 +277,6 @@ function dev(projectPath, log, callback) {
                 },
                 function (cb) {
                     compileLess(cb);
-                },
-                function (cb) {
-                    compileSass(cb);
                 },
                 function (cb) {
                     compileHtml(cb);

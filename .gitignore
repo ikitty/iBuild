@@ -24,11 +24,7 @@ dist
 # Optional REPL history
 .node_repl_history
 
-dist-win
 
 .DS_Store
-
-templates
 build
-assets/img
-assets/js
+zdevSource
