@@ -30,18 +30,16 @@ let $newProject = $('#js-new-project');
 let $projectList = $('#js-project-list');
 let $buildDevButton = $('#js-build-dev');
 
-let $logButton = $('#js-log-button');
-let $log = $('#js-log');
-let $logContent = $log.find('.logs__inner');
-let $cleanLog = $('#js-clean-log');
-let $logStatus = $('#js-logs-status');
+let $logStatus = $('#logMsg');
 
+let $setting = $('#settingWrap');
 let $settingButton = $('#js-setting-button');
 let $settingClose = $('#js-setting-close');
-let $setting = $('#js-setting');
-let $workspaceSection = $('#js-workspace');
 
+let $workspaceSection = $('#js-workspace');
 let $formWorkspace = $('#js-form-workspace');
+let $formGamename = $('#formGamename');
+
 let changeTimer = null;
 let $curProject = null;
 let once = false;
@@ -55,10 +53,10 @@ let newProjectSucess = false;
 //define project list template
 let getListTmp = (name,path ) => (
         `<li class="list_item" data-project="${name}" title="${path}">
-            <span class="icon icon-finder" data-finder="true" ></span>
+            <span class="icon icon-finder" data-finder="true" title="打开项目文件夹"></span>
             <div class="list_content">
-                <span class="projects__name">${name}</span>
-                <div class="projects__path">${path}</div>
+                <span class="projects_name">${name}</span>
+                <div class="projects_path">${path}</div>
             </div>
         </li>`
 )
@@ -345,12 +343,11 @@ function newProjectFn() {
     if (!$welcome.hasClass('hide')) {
         $welcome.addClass('hide');
     }
-
     let $projectHtml = $(`<li class="list_item" data-project="" title="">
                               <span class="icon icon-finder" data-finder="true"></span>
                               <div class="list_content">
-                                  <span class="projects__name" contenteditable></span>
-                                  <div class="projects__path"></div>
+                                  <span class="projects_name" contenteditable></span>
+                                  <div class="projects_path"></div>
                               </div>
                         </li>`);
 
@@ -358,7 +355,7 @@ function newProjectFn() {
 
     $projectList.scrollTop($projectList.get(0).scrollHeight);
 
-    let $input = $projectHtml.find('.projects__name');
+    let $input = $projectHtml.find('.projects_name');
 
 
     $input.get(0).focus();
@@ -506,7 +503,7 @@ function newProjectReply(projectPath) {
 
             $curProject.data('project', projectName);
             $curProject.attr('title', projectPath);
-            $curProject.find('.projects__path').text(projectPath);
+            $curProject.find('.projects_path').text(projectPath);
 
             $projectList.append($curProject);
         }
@@ -534,21 +531,20 @@ $('#js-tasks').find('.jsTaskBtn').on('click', function () {
 });
 
 function runTask(taskName, context) {
-    $logStatus.text('Running...');
+    $logStatus.text('开始运行');
 
     let projectPath = $curProject.attr('title');
     if (taskName === 'dev') {
         if ($buildDevButton.data('devwatch')) {
             killBs();
-            $logStatus.text('Done');
+            $logStatus.text('完成');
 
         } else {
             dev(projectPath, function (data) {
-                logReply(data);
             }, function (bs) {
                 bsObj[projectPath] = bs;
                 setWatching();
-                $logStatus.text('Done');
+                $logStatus.text('监听中...');
             });
         }
 
@@ -557,11 +553,9 @@ function runTask(taskName, context) {
     if (taskName === 'dist') {
         context.text('执行中');
         dist(projectPath, function (data) {
-            logReply(data);
         }, function () {
             setTimeout(function () {
-                $logStatus.text('Done');
-                logReply('编译完成');
+                $logStatus.text('编译完成');
                 console.log('编译完成');
                 context.text('编译')
             }, 500);
@@ -569,17 +563,9 @@ function runTask(taskName, context) {
     }
 }
 
-function logReply(data) {
-    let D = new Date();
-    let h = D.getHours();
-    let m = D.getMinutes();
-    let s = D.getSeconds();
-
-    $logContent.append(`<div><span class="logs__time">[${h}:${m}:${s}]</span> ${data}</div>`);
-    $logContent.scrollTop($logContent.get(0).scrollHeight);
-}
-
-
+//=================================================================
+//======================= Setting =================================
+//=================================================================
 //全局设置和项目设置
 //点击全局设置按钮的时候
 //1. 初始化数据
@@ -590,6 +576,7 @@ $settingButton.on('click', function () {
     settingFn();
 });
 
+//init setting data
 function settingFn() {
     curConfigPath = Common.CONFIGPATH;
     initConfig();
@@ -602,11 +589,9 @@ function settingFn() {
     }
 }
 
-//关闭设置面板
-$settingClose.on('click', function () {
-    $setting.addClass('hide');
-});
+$settingClose.on('click', function () { $setting.addClass('hide'); });
 
+//update setting
 $setting.on('change', 'input', function () {
     clearTimeout(changeTimer);
 
@@ -615,22 +600,18 @@ $setting.on('change', 'input', function () {
     if ($this.data('workspace')) {
         let storage = Common.getStorage();
         let originWorkspace = storage.workspace;
-
         storage.workspace = $.trim($this.val());
 
         gulp.src(path.join(originWorkspace, '/**/*'))
             .pipe(gulp.dest(storage.workspace))
             .on('end', function () {
-
                 async.series([
                     function (next) {
                         shell.moveItemToTrash(originWorkspace);
                         next();
                     },
                     function (next) {
-                        //更新 localstorage
                         let projects = storage.projects;
-
                         async.eachSeries(projects, function (project, callback) {
                             project.path = project.path.replace(originWorkspace, storage.workspace);
                             callback();
@@ -640,17 +621,10 @@ $setting.on('change', 'input', function () {
                         });
                     }
                 ], function (error) {
-                    if (error) {
-                        throw new Error(error);
-                    }
-
-                    //更新 dom
+                    if (error) { throw new Error(error); }
                     initData();
-
                     console.log('workspace update success.');
-
                 });
-
             });
 
     } else {
@@ -658,30 +632,10 @@ $setting.on('change', 'input', function () {
     }
 });
 
-//初始化设置面板数据
-//重要的是每次都需要加载特定设置文件,如区分出是 全局, 或是 项目设置, 用一个全局变量 curConfigPath 保存着
 function initConfig() {
-    //需要去缓存加载
     config = Common.requireUncached(curConfigPath);
-
     for (let i in config) {
-
-        if (i === 'ftp') {
-            for (var j in config['ftp']) {
-                let $el = $(`input[name=ftp-${j}]`);
-
-                if ($el && $el.length) {
-                    if ($el.attr('type') === 'text') {
-                        $el.val(config['ftp'][j]);
-                    } else {
-                        $el.prop('checked', config['ftp'][j]);
-                    }
-                }
-            }
-        }
-
         let $el = $(`input[name=${i}]`);
-
         if ($el && $el.length) {
             if ($el.attr('type') === 'text') {
                 $el.val(config[i]);
@@ -692,33 +646,23 @@ function initConfig() {
     }
 }
 
-//更新配置
 function updateConfig($this) {
     let name = $this.attr('name');
     let val = $.trim($this.val());
     let checked = $this.prop('checked');
     let type = $this.attr('type');
-
-    let nameArr = name.split('-');
-    let pname = nameArr[0];
-    let cname = nameArr[1];
-
-    if (cname) {
-        config[pname][cname] = type === 'text' ? val : checked;
-    } else {
-        config[pname] = type === 'text' ? val : checked;
+    if (type === 'text' && !val ) {
+        alert('所有选项都不能为空');
+        return  ;
     }
+    config[name] = type === 'text' ? val : checked;
 
-    //写入configPath
     changeTimer = setTimeout(function () {
         fs.writeFile(curConfigPath, JSON.stringify(config, null, 4), function (err) {
-            if (err) {
-                throw new Error(err);
-            }
-
+            if (err) { throw new Error(err); }
             console.log('update config success.');
         })
-    }, 1500);
+    }, 1000);
 }
 
 //点击项目信息的时候
@@ -752,27 +696,6 @@ function settingCurrentProject() {
     $setting.removeClass('hide');
 }
 
-
-//===========================================
-//log 切换
-//===========================================
-$logButton.on('click', function () {
-    let $this = $(this);
-
-    if ($this.hasClass('icon-log_green')) {
-        $this.removeClass('icon-log_green');
-    } else {
-        $this.addClass('icon-log_green');
-    }
-
-    if ($log.hasClass('logs_show')) {
-        $log.removeClass('logs_show');
-        $projectList.removeClass('projects__list_high');
-    } else {
-        $log.addClass('logs_show');
-        $projectList.addClass('projects__list_high');
-    }
-});
 
 //项目列表绑定点击事件
 //todo 节流
@@ -845,10 +768,6 @@ $projectList.on('click', '[data-finder=true]', function () {
     }
 });
 
-//清除 log 信息
-$cleanLog.on('click', function () {
-    $logContent.html('');
-});
 
 function stopWatch() {
     if(bsObj){
@@ -887,4 +806,3 @@ ipc.on('checkForUpdateReply', function (event, index, status) {
         }
     }
 });
-

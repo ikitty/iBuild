@@ -1,6 +1,6 @@
 {
     "livereload": true,
+    "gameName": "t7",
     "supportREM": false,
-    "supportWebp": true,
-    "supportChanged": false
+    "supportWebp": false
 }

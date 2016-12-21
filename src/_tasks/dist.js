@@ -7,6 +7,9 @@ const fs = require('fs');
 const del = require('del');
 const path = require('path');
 const gulpif = require('gulp-if');
+
+const g_replace = require('gulp-replace')
+
 const less = require('gulp-less');
 const util = require(path.join(__dirname, './lib/util'));
 const uglify = require('gulp-uglify');
@@ -33,7 +36,7 @@ let changed = require(path.join(__dirname, './common/changed'))();
 
 function dist(projectPath, log, callback) {
 
-    let projectConfigPath = path.join(projectPath, Common.CONFIGPATH);
+    let projectConfigPath = path.join(projectPath, Common.CONFIGNAME);
     let config = null;
 
     if (Common.fileExist(projectConfigPath)) {
@@ -44,15 +47,19 @@ function dist(projectPath, log, callback) {
 
     let lazyDir = config.lazyDir || ['../slice'];
 
+    //todo tips for set config , get actName
+    //let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/${actName}/`
+    let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/`
+
     let postcssOption = [];
 
     if (config.supportREM) {
         postcssOption = [
             postcssAutoprefixer({browsers: ['last 9 versions']}),
             postcssPxtorem({
-                root_value: '20', // 基准值 html{ font-zise: 20px; }
-                prop_white_list: [], // 对所有 px 值生效
-                minPixelValue: 2 // 忽略 1px 值
+                root_value: '20', 
+                prop_white_list: [],
+                minPixelValue: 2 
             })
         ]
     } else {
@@ -156,7 +163,14 @@ function dist(projectPath, log, callback) {
 
     //CSS 压缩
     function miniCSS(cb) {
+        //todo sprite img 
+        //todo repalce img src
+        //todo imgin
+        console.log(config.gameName) ;
+
         gulp.src(paths.tmp.cssAll)
+            //todo modify img to images
+            .pipe(g_replace('(../img/', '(' + imgPrefix ))
             .pipe(minifyCSS({
                 safe: true,
                 reduceTransforms: false,

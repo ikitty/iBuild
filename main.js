@@ -18,7 +18,8 @@ let logo = path.join(__dirname, 'assets/img/logo.png');
 let debug = 1
 
 let winWidth = 800 
-let winHeight = 500
+//100+420+30
+let winHeight = 550
 
 if (debug) {
     winWidth = 1500
