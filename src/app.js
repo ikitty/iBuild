@@ -566,12 +566,6 @@ function runTask(taskName, context) {
 //=================================================================
 //======================= Setting =================================
 //=================================================================
-//全局设置和项目设置
-//点击全局设置按钮的时候
-//1. 初始化数据
-//2. 显示设置面板
-//3. 显示 workspace 设置区域
-//4. 隐藏 删除项目 按钮
 $settingButton.on('click', function () {
     settingFn();
 });
@@ -665,13 +659,7 @@ function updateConfig($this) {
     }, 1000);
 }
 
-//点击项目信息的时候
-//1.先判断一下项目配置文件是否存在
-//2.如果不存在则复制一份全局的过去
-//3.初始化设置面板数据
-//4.隐藏工作区设置
-//5.显示 项目删除 按钮
-//6.显示设置面板
+//设置单个项目
 $('.jsSetCurrent').on('click', function () {
     settingCurrentProject();
 })
@@ -680,7 +668,6 @@ function settingCurrentProject() {
     let projectPath = $curProject.attr('title');
     curConfigPath = path.join(projectPath, Common.CONFIGNAME);
 
-    //如果当前项目下的 config 不存在的时候,先挪过去
     if (!Common.fileExist(curConfigPath)) {
         gulp.src(Common.CONFIGPATH)
             .pipe(gulp.dest(projectPath))

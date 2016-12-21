@@ -35,7 +35,6 @@ let webp = require(path.join(__dirname, './common/webp'));
 let changed = require(path.join(__dirname, './common/changed'))();
 
 function dist(projectPath, log, callback) {
-
     let projectConfigPath = path.join(projectPath, Common.CONFIGNAME);
     let config = null;
 
@@ -47,9 +46,8 @@ function dist(projectPath, log, callback) {
 
     let lazyDir = config.lazyDir || ['../slice'];
 
-    //todo tips for set config , get actName
-    //let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/${actName}/`
-    let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/`
+    //todo tips for set config 
+    let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/${path.basename(projectPath)}/`
 
     let postcssOption = [];
 
@@ -303,7 +301,6 @@ function dist(projectPath, log, callback) {
     }
 
     function findChanged(cb) {
-
         if (!config['supportChanged']) {
             gulp.src(paths.tmp.dirAll, {base: paths.tmp.dir})
                 .pipe(gulp.dest(paths.dist.dir))
