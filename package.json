@@ -58,10 +58,8 @@
     "rd": "^0.0.2",
     "gulp-lazyimagecss": "^2.0.0",
     "weflow-imagemin": "^0.0.3",
-    "weflow-rev-all": "^0.0.1",
     "gulp-tmtsprite": "^0.0.22",
     "gulp-util": "^3.0.7",
-    "gulp-rev-delete-original": "^0.1.0",
     "crypto-md5": "^1.0.0"
   }
 }

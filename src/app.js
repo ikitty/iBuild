@@ -25,15 +25,15 @@ const packageJson = nodeRequire(path.join(__dirname, './package.json'));
 //变量声明
 let $welcome = $('#welcomePart');
 let $example = $('#btnTry');
+let $newProject = $('#btnNewProject');
 
-let $newProject = $('#js-new-project');
 let $projectList = $('#js-project-list');
-let $buildDevButton = $('#js-build-dev');
+let $buildDevButton = $('#btnTaskDev');
 
 let $logStatus = $('#logMsg');
 
 let $setting = $('#settingWrap');
-let $settingButton = $('#js-setting-button');
+let $settingButton = $('#btnGlobalSet');
 let $settingClose = $('#js-setting-close');
 
 let $workspaceSection = $('#js-workspace');
@@ -152,43 +152,36 @@ function initData() {
 }
 
 
-//导入demo
+//demo
 $example.on('click', function () {
+    $welcome.addClass('hide');
     let storage = Common.getStorage();
 
     if (storage && storage['workspace']) {
         let projectName = Common.EXAMPLE_NAME;
         let projectPath = path.join(storage['workspace'], Common.EXAMPLE_NAME);
 
-        if (storage.projects && storage.projects[projectName]) {
-            //已经打开,直接切换
-        } else {
+        if (!(storage.projects && storage.projects[projectName])) {
+            gulp.src(Common.template_demo, {base: Common.template_path})
+                .pipe(gulp.dest(storage.workspace))
+                .on('end', function () {
+                    let listTmp = getListTmp(projectName, projectPath)
+                    let $projectHtml = $(listTmp)
 
-            extract(Common.TEMPLAGE_EXAMPLE, {dir: storage['workspace']}, function (err) {
-                if (err) {
-                    throw new Error(err);
-                }
+                    $projectList.append($projectHtml);
+                    $projectList.scrollTop($projectList.get(0).scrollHeight);
 
-                let listTmp = getListTmp(projectName, projectPath)
-                let $projectHtml = $(listTmp)
+                    if (!storage['projects']) { storage['projects'] = {}; }
 
-                $projectList.append($projectHtml);
-                $projectList.scrollTop($projectList.get(0).scrollHeight);
+                    storage['projects'][projectName] = {};
+                    storage['projects'][projectName]['path'] = projectPath;
+                    Common.setStorage(storage);
 
-                if (!storage['projects']) {
-                    storage['projects'] = {};
-                }
-
-                storage['projects'][projectName] = {};
-                storage['projects'][projectName]['path'] = projectPath;
-                Common.setStorage(storage);
-
-                console.log('created demo OK.');
-            });
+                    console.log('created demo OK.');
+                });
         }
     }
 
-    $welcome.addClass('hide');
 });
 
 
@@ -340,9 +333,7 @@ $newProject.on('click', function () {
 });
 
 function newProjectFn() {
-    if (!$welcome.hasClass('hide')) {
-        $welcome.addClass('hide');
-    }
+    $welcome.addClass('hide');
     let $projectHtml = $(`<li class="list_item" data-project="" title="">
                               <span class="icon icon-finder" data-finder="true"></span>
                               <div class="list_content">
@@ -477,12 +468,11 @@ function newProject(projectPath, callback) {
         }
     }
 
-    extract(Common.TEMPLAGE_PROJECT, {dir: projectPath}, function (err) {
-        if (err) {
-            throw new Error(err);
-        }
-        callback(projectPath);
-    });
+    gulp.src(Common.template_project, {base: path.join(Common.template_path, 'project')})
+        .pipe(gulp.dest(projectPath))
+        .on('end', function () {
+            callback(projectPath);
+        })
 }
 
 function newProjectReply(projectPath) {

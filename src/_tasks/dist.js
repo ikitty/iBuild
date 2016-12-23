@@ -20,14 +20,12 @@ const imagemin = require('weflow-imagemin');
 // const tmtsprite = require('gulp-tmtsprite');   // 雪碧图合并
 const pngquant = require('imagemin-pngquant');
 
-const postcss = require('gulp-postcss');  // CSS 预处理
-const postcssPxtorem = require('postcss-pxtorem'); // 转换 px 为 rem
-const postcssAutoprefixer = require('autoprefixer');
+const postcss = require('gulp-postcss');  
 const posthtml = require('gulp-posthtml');
+const postcssPxtorem = require('postcss-pxtorem');
 const posthtmlPx2rem = require('posthtml-px2rem');
+const postcssAutoprefixer = require('autoprefixer');
 
-const RevAll = require('weflow-rev-all');   // reversion
-const revDel = require('gulp-rev-delete-original');
 // const sass = require('gulp-sass');
 const Common = require(path.join(__dirname, '../common'));
 
@@ -47,6 +45,10 @@ function dist(projectPath, log, callback) {
     let lazyDir = config.lazyDir || ['../slice'];
 
     //todo tips for set config 
+    if (!config.gameName) {
+        alert('请设置对应的业务id');
+        return  ;
+    }
     let imgPrefix = `//game.gtimg.cn/images/${config.gameName}/act/${path.basename(projectPath)}/`
 
     let postcssOption = [];
@@ -257,32 +259,6 @@ function dist(projectPath, log, callback) {
             });
     }
 
-    //新文件名(md5)
-    function reversion(cb) {
-        var revAll = new RevAll({
-            fileNameManifest: 'manifest.json',
-            dontRenameFile: ['.html', '.php']
-        });
-
-        if (config['reversion']) {
-            gulp.src(paths.tmp.dirAll)
-                .pipe(revAll.revision())
-                .pipe(gulp.dest(paths.tmp.dir))
-                .pipe(revDel({
-                    exclude: /(.html|.htm)$/
-                }))
-                .pipe(revAll.manifestFile())
-                .pipe(gulp.dest(paths.tmp.dir))
-                .on('end', function () {
-                    console.log('reversion success.');
-                    log('reversion success.');
-                    cb && cb();
-                })
-        } else {
-            cb && cb();
-        }
-    }
-
     //webp 编译
     function supportWebp(cb) {
         if (config['supportWebp']) {
@@ -301,61 +277,11 @@ function dist(projectPath, log, callback) {
     }
 
     function findChanged(cb) {
-        if (!config['supportChanged']) {
-            gulp.src(paths.tmp.dirAll, {base: paths.tmp.dir})
-                .pipe(gulp.dest(paths.dist.dir))
-                .on('end', function () {
-                    delTmp(cb);
-                })
-        } else {
-            var diff = changed(paths.tmp.dir);
-            var tmpSrc = [];
-
-            if (!_.isEmpty(diff)) {
-
-                //如果有reversion
-                if (config['reversion'] && config['reversion']['available']) {
-                    var keys = _.keys(diff);
-
-                    //先取得 reversion 生成的manifest.json
-                    var reversionManifest = require(path.join(paths.tmp.dir, './manifest.json'));
-
-                    if (reversionManifest) {
-                        reversionManifest = _.invert(reversionManifest);
-
-                        reversionManifest = _.pick(reversionManifest, keys);
-
-                        reversionManifest = _.invert(reversionManifest);
-
-                        _.forEach(reversionManifest, function (item, index) {
-                            tmpSrc.push(path.join(paths.tmp.dir, item));
-                            console.log('[changed:] ' + util.colors.blue(index));
-                        });
-
-                        //将新的 manifest.json 保存
-                        fs.writeFileSync(path.join(paths.tmp.dir, './manifest.json'), JSON.stringify(reversionManifest));
-
-                        tmpSrc.push(path.join(paths.tmp.dir, './manifest.json'));
-                    }
-                } else {
-                    _.forEach(diff, function (item, index) {
-                        tmpSrc.push(path.join(paths.tmp.dir, index));
-                        console.log('[changed:] ' + util.colors.blue(index));
-                    });
-                }
-
-                gulp.src(tmpSrc, {base: paths.tmp.dir})
-                    .pipe(gulp.dest(paths.dist.dir))
-                    .on('end', function () {
-                        delTmp(cb);
-                    })
-
-            } else {
-                console.log('Nothing changed!');
+        gulp.src(paths.tmp.dirAll, {base: paths.tmp.dir})
+            .pipe(gulp.dest(paths.dist.dir))
+            .on('end', function () {
                 delTmp(cb);
-            }
-        }
-
+            })
     }
 
     async.series([
@@ -390,9 +316,6 @@ function dist(projectPath, log, callback) {
         function (next) {
             compileHtml(next);
         },
-        //function (next) {
-            //reversion(next);
-        //},
         function (next) {
             supportWebp(next);
         },

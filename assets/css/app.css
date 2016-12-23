@@ -1,8 +1,8 @@
 * {margin:0;padding:0;list-style:none;}
 
 html,
-body { min-height: 600px; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
-.wraper { position: relative; min-height: 600px; overflow: hidden; }
+body {  overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+.wraper { position: relative;}
 .hide { display: none !important; }
 
 .icon-finder { width: 32px; height: 32px; background-image: url(../img/icon_finder.png);background-size: 100%; }
@@ -12,13 +12,13 @@ body { min-height: 600px; overflow: hidden; font-family: -apple-system, BlinkMac
 .btn_try { position: relative; width: 136px; height: 28px; line-height: 28px; color: #4A90E2; font-size: 12px; text-align: center; margin: 0 auto; cursor: pointer; border: 1px solid #4A90E2;border-radius:2px;}
 
 
-.top_bar {height:100px;line-height: 100px; padding: 0 20px;  background-color: #fff; border-bottom:1px solid #ddd; }
+.top_bar {height:99px;line-height: 99px; padding: 0 20px;  background-color: #fff; border-bottom:1px solid #ddd; }
 .top_bar .op_item {position:relative;float:right;margin-left:35px;margin-top:35px;font:400 16px/30px "\5FAE\8F6F\96C5\9ED1", tahoma;cursor:pointer;}
 .top_bar .op_item:before {position:absolute;content:'';top:7px;left:-20px;width:16px;height:16px;background-repeat:no-repeat;background-size:100%;}
 .top_bar .op_item_set:before {background-image:url(../img/icon_set.png);}
-.top_bar .op_item_apply:before {background-image:url(../img/icon_add.png);}
-
+.top_bar .op_item_apply:before {background-image:url(../img/icon_apply.png);}
 .top_bar .op_item_apply input {position:absolute;left:0px;top:0px;width:100%;height:100%;opacity:.0}
+.top_bar .op_item_new:before {background-image:url(../img/icon_new.png);}
 
 .logo_area {float:left;}
 .logo { float:left;width: 60px; height: 60px;margin-top:20px; background-image: url(../img/logo.png); background-size: 60px;}
@@ -29,9 +29,9 @@ body { min-height: 600px; overflow: hidden; font-family: -apple-system, BlinkMac
 
 /*项目列表*/
 .project_wrap {position:relative;}
-.project_ul { overflow-y: auto;  -webkit-user-select: none; }
+.project_ul {height:299px;overflow-y: auto;-webkit-user-select: none; }
 
-.list_item { position: relative; height: 60px; padding: 0 20px 0 25px;border-bottom:1px dotted #eee;} 
+.list_item { position: relative; height: 59px; padding: 0 20px 0 25px;border-bottom:1px dotted #eee;} 
 .list_item .icon-finder {float:left;margin-top:18px;margin-right:15px;cursor:pointer;}
 .list_item_watching:before {position:absolute;left:7px;top:27px;content:'';font-size:0px;width:6px;height:6px;border-radius:3px;background-color:#14d009;}
 
@@ -39,9 +39,8 @@ body { min-height: 600px; overflow: hidden; font-family: -apple-system, BlinkMac
 .list_content { float:left;width:450px;margin-top:14px;overflow:hidden;text-overflow:ellipsis;word-break:keep-all;white-space:nowrap;padding-right: 20px; }
 
 .projects_name { display: block; font-size: 15px; color: #4D4D4D; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;  }
+.projects_name:focus {outline:none;border:2px solid #66AAFF;text-indent:2px;}
 .projects_path { font-size: 12px; color: #aaa; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;  }
-
-
 
 /* setting */
 .setting { position: fixed; left: 0; top: 0; z-index: 200; width: 100%;height:100vh;background-color:#fff; }
@@ -59,4 +58,4 @@ body { min-height: 600px; overflow: hidden; font-family: -apple-system, BlinkMac
 .setting .icon-close { position: absolute; right: 15px; top: 20px; } 
 
 /* =====bottom status bar===== */
-.bottom_status {position: fixed;box-sizing:border-box; left: 0; bottom: 0;width: 100%;height:30px;font:400 12px/28px tahoma;padding-left:15px;color:green; background-color:#eee; }
+.bottom_status {box-sizing:border-box;height:30px;font:400 12px/28px tahoma;padding-left:15px;color:green; background-color:#eee; }

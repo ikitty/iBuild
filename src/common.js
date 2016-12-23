@@ -17,10 +17,12 @@ Common.PLATFORM = process.platform;
 //Common.DEFAULT_PATH = Common.PLATFORM === 'win32' ? 'desktop' : 'home';
 Common.DEFAULT_PATH = 'desktop' ;
 
-Common.TEMPLAGE_PROJECT = path.resolve(path.join(__dirname, '../templates/project.zip'));
-Common.TEMPLAGE_EXAMPLE = path.resolve(path.join(__dirname, '../templates/demo.zip'));
-
 Common.EXAMPLE_NAME = 'demo';
+Common.template_path = path.resolve(path.join(__dirname, '../templates/'));
+Common.template_demo = path.resolve(path.join(__dirname, '../templates/demo/**/*'));
+Common.template_project = path.resolve(path.join(__dirname, '../templates/project/**/*'));
+
+
 Common.CHECKURL = 'https://raw.githubusercontent.com/ikitty/iBuild/master/package.json';
 Common.DOWNLOADURL = 'https://github.com/ikitty/iBuild/releases';
 

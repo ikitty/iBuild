@@ -18,12 +18,12 @@ let logo = path.join(__dirname, 'assets/img/logo.png');
 let debug = 1
 
 let winWidth = 800 
-//100+420+30
-let winHeight = 550
+//100+300+30+58
+let winHeight = 488
 
 if (debug) {
     winWidth = 1500
-    winHeight = 1000 
+    winHeight = 900
 }
 
 function createWindow() {
