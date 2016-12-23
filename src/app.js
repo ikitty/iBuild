@@ -337,7 +337,7 @@ function newProjectFn() {
     let $projectHtml = $(`<li class="list_item" data-project="" title="">
                               <span class="icon icon-finder" data-finder="true"></span>
                               <div class="list_content">
-                                  <span class="projects_name" contenteditable></span>
+                                  <span class="projects_name" title="输入专题名称后按回车确定" contenteditable="plaintext-only"></span>
                                   <div class="projects_path"></div>
                               </div>
                         </li>`);
@@ -362,6 +362,7 @@ function editName($project, $input) {
     let hasText = false;
 
     $input.keypress(function (event) {
+            console.log('pressed!!') ;
             let $this = $(this);
             let _this = this;
             text = $.trim($this.text());
@@ -385,40 +386,6 @@ function editName($project, $input) {
             }
 
         })
-        .blur(function () {
-
-            let $this = $(this);
-            let _this = this;
-
-            //解决当用新建按钮来失焦时的重复执行问题
-            clearTimeout(blurTimer);
-
-            blurTimer = setTimeout(function () {
-                text = $.trim($this.text());
-
-                if (text) {
-                    hasText = false;
-                    keyboard = false;
-                }
-
-                if (!hasText && !keyboard) {
-
-                    setTimeout(function () {
-
-                        if (text !== '') {
-                            setProjectInfo($project, $this, text);
-
-                            hasText = true;
-                        } else {
-                            alert('请输入项目名');
-                            if(Common.PLATFORM !== 'win32'){
-                                _this.focus();
-                            }
-                        }
-                    }, 100);
-                }
-            }, 100);
-        });
 }
 
 //设置新建项目信息
@@ -439,7 +406,6 @@ function setProjectInfo($project, $input, text) {
 
         } else {
             alert(text + ' 项目已存在');
-            $input.text('');
             editName($project, $input);
         }
     }
