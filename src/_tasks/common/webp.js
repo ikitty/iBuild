@@ -58,7 +58,7 @@ module.exports = function (projectPath, callback) {
     }
 
     function find2Webp(cb) {
-        render_webp(path.join(projectPath, './tmp/sprite'));
+        // render_webp(path.join(projectPath, './tmp/sprite'));
         render_webp(path.join(projectPath, './tmp/img'));
         if (imgArr.length) {
             reg = eval('/(' + imgArr.join('|') + ')/ig');
@@ -95,9 +95,9 @@ module.exports = function (projectPath, callback) {
     }
 
     async.series([
-        function (next) {
-            compileSprite(next);
-        },
+        // function (next) {
+            // compileSprite(next);
+        // },
         function (next) {
             compileImg(next);
         },
@@ -107,9 +107,9 @@ module.exports = function (projectPath, callback) {
         function(next){
             compileCss(next);
         },
-        function(next){
-            insertWebpJs(next);
-        }
+        // function(next){
+            // insertWebpJs(next);
+        // }
     ], function (err) {
         if(err){
             throw new Error(err);

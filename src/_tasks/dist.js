@@ -26,7 +26,7 @@ const postcssPxtorem = require('postcss-pxtorem');
 const posthtmlPx2rem = require('posthtml-px2rem');
 const postcssAutoprefixer = require('autoprefixer');
 
-// const sass = require('gulp-sass');
+//const sass = require('gulp-sass');
 const Common = require(path.join(__dirname, '../common'));
 
 let webp = require(path.join(__dirname, './common/webp'));
@@ -291,9 +291,9 @@ function dist(projectPath, log, callback) {
         function (next) {
             compileLess(next);
         },
-        //function (next) {
+        function (next) {
             //compileSass(next);
-        //},
+        },
         function (next) {
             compileAutoprefixer(next);
         },
